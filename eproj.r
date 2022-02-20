@@ -150,6 +150,7 @@ plot(SpeRich ~ WatrCont,
      cex = 0.5)
 
 # test the correlation between species richness and the numerical environmental variables
+# to determine whether there is a linear correlation between two numeric variables
 # the null hypothesis (H0) is that there is no correlation between the variables (correlation equal to 0)
 cor.test(mite_env$SpeRich, mite_env$SubsDens) 
 # alternative hypothesis: true correlation is not equal to 0 (two-sided)
@@ -164,10 +165,12 @@ cor.test(mite_env$SpeRich, mite_env$WatrCont)
 # very significant negative correlation between Water Content and Species Richness
 
 # run a regression model for each correlated numeric environmental variable
+# linear regression is an approach to model the linear correlation between one or more variables
 mod_watr <- lm(SpeRich ~ WatrCont, data = mite_env)
 # inspect its summary
 summary(mod_watr)
-# Intercept and WatrCont are very significant because they bothhave a Pr(>|t|) < 0.01
+# Intercept and WatrCont are very significant because they both have a Pr(>|t|) < 0.01,
+# which is the p-value associated to the estimated coefficients, indicating their significance.
 # Adjusted R-squared: 0.4757, moderate value -> 47% of the variance of species richness is explained by the linear model 
 # p-value: 6.553e-11, very low -> significant model
 
@@ -179,6 +182,7 @@ plot(SpeRich ~ WatrCont,
      ylab = "Species Richness",
      ylim = c(0,30),
      cex = 0.5)
+# to graphically represent the model 
 abline(mod_watr$coefficients[1], mod_watr$coefficients[2], col = "red")
 
 # check if residuals are normally distributed
