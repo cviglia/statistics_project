@@ -17,12 +17,14 @@ mite_env <- read.table("data/mite_env.txt",
                        header = T)
 
 # count observations, species and environmental variables
-observations <- nrow(mite) # number of observations = number of rows = 70
-species <- ncol(mite)  # number of species = number of columns = 35
-env_variables <- ncol(mite_env) # number of environmental variables = number of columns of environmental variables = 5
+observations <- nrow(mite) # number of observations = number of rows (70)
+species <- ncol(mite)  # number of species = number of columns (35)
+env_variables <- ncol(mite_env) # number of environmental variables = number of columns of environmental variables (5)
 
 # check the documentation
 ?mite
+# mite contains the data on 35 species of Oribatid mites, 
+# mite.env contains environmental data in the same sampling sites
 
 # check data structure
 str(mite)
@@ -40,7 +42,7 @@ mite_env$Substrate <- factor(mite_env$Substrate,
                              levels = c("Sphagn1", "Litter", "Interface", "Sphagn3", "Sphagn4", "Sphagn2", "Barepeat", "Sphagn", NA))
 # check Shrub
 unique(mite_env$Shrub)
-# transform Shrub in factor data type
+# transform Shrub in ordered factor data type
 mite_env$Shrub <- factor(mite_env$Shrub,
                          levels = c("None","Few","Many", NA),
                          ordered = T)
@@ -75,11 +77,13 @@ mite <- mite[-index_na, ] # omit same rows in mite
 # plot histograms for the numerical variables
 hist(mite_env$SubsDens,
      main = "Substrate Density", # title
-     xlab = "g/L") # x axis
+     xlab = "g/L", # x axis
+     ylim = c(0,30)) 
 
 hist(mite_env$WatrCont,
      main = "Water Content of the Substrate",
-     xlab = "g/L")
+     xlab = "g/L",
+     ylim = c(0,20))
 
 # plot barplots for the categorical variables
 # contingency table with the function table()
@@ -93,21 +97,23 @@ barplot(table(mite_env$Shrub),
 
 barplot(table(mite_env$Topo),
         main = "Microtopography",
-        xlab = "Levels")
+        xlab = "Levels",
+        ylim = c(0,50))
 
 # export at least one graph to the outputs subfolder
-png(filename = "outputs/SubsDens.png",
-    width = 4000,
-    height = 3000,
+png(filename = "outputs/hist_SubsDens.png",
+    width = 1800,
+    height = 1800,
     res = 300)
 hist(mite_env$SubsDens,
      main = "Substrate Density",
-     xlab = "g/L")
+     xlab = "g/L",
+     ylim = c(0,30))
 dev.off()
 
-png(filename = "outputs/Shrub.png",
-    width = 4000,
-    height = 3000,
+png(filename = "outputs/bar_Shrub.png",
+    width = 1800,
+    height = 1800,
     res = 300)
 barplot(table(mite_env$Shrub),
         main = "Shrub Density")
@@ -144,7 +150,7 @@ plot(SpeRich ~ WatrCont,
      cex = 0.5)
 
 # test the correlation between species richness and the numerical environmental variables
-# the null hypothesis H0 is that there is no correlation between the variables (correlation equal to 0)
+# the null hypothesis (H0) is that there is no correlation between the variables (correlation equal to 0)
 cor.test(mite_env$SpeRich, mite_env$SubsDens) 
 # alternative hypothesis: true correlation is not equal to 0 (two-sided)
 # p-value = 0.8179 -> not significant (p-value > 0.1 = no evidence against H0 -> no correlation)
@@ -157,8 +163,9 @@ cor.test(mite_env$SpeRich, mite_env$WatrCont)
 # cor = -0.6954274 
 # very significant negative correlation between Water Content and Species Richness
 
-# run a regression model for each correlated numeric environmental variable and inspect its summary
+# run a regression model for each correlated numeric environmental variable
 mod_watr <- lm(SpeRich ~ WatrCont, data = mite_env)
+# inspect its summary
 summary(mod_watr)
 # Intercept and WatrCont are very significant because they bothhave a Pr(>|t|) < 0.01
 # Adjusted R-squared: 0.4757, moderate value -> 47% of the variance of species richness is explained by the linear model 
